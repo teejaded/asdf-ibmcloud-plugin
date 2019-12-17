@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# detect the tool name
+readonly __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly toolname="$(basename "$(dirname "${__dirname}")" | sed "s/^ic\\-//")"
+
+ibmcloud plugin install "$ASDF_INSTALL_PATH/bin/$toolname" <<< 'y'

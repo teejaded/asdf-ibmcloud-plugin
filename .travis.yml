@@ -1,0 +1,11 @@
+language: shell
+before_script:
+  - git clone https://github.com/asdf-vm/asdf.git
+  - . asdf/asdf.sh
+script:
+  - asdf plugin-add ic-container-service ./
+  - asdf list-all ic-container-service
+  - asdf plugin-test ic-container-service ./ 'ibmcloud plugin list'
+os:
+  - osx
+  - linux

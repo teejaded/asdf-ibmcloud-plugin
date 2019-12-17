@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[ -z "${ASDF_INSTALL_TYPE+x}" ] && echo "ASDF_INSTALL_TYPE is required" && exit 1
+[ -z "${ASDF_INSTALL_VERSION+x}" ] && echo "ASDF_INSTALL_VERSION is required" && exit 1
+[ -z "${ASDF_INSTALL_PATH+x}" ] && echo "ASDF_INSTALL_PATH is required" && exit 1
+
+# detect the tool name
+readonly __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly toolname="$(basename "$(dirname "${__dirname}")" | sed "s/^ic\\-//")"
+
+install() {
+  local install_type version install_path bin_install_path \
+    download_url download_path files
+
+  install_type=$1
+  [ "$install_type" != "version" ] && echo "intall type, $install_type, is not supported" && exit 1
+
+  version=$2
+  install_path=$3
+  bin_install_path="$install_path/bin"
+  download_url="$(get_download_url "$version")"
+  download_path="$install_path/bin/$toolname"
+
+  echo "Downloading ibmcloud from ${download_url} to ${download_path}"
+  mkdir -p "${bin_install_path}"
+  curl -Lo "$download_path" "$download_url"
+
+  ibmcloud plugin install "$download_path" <<< 'y'
+}
+
+platform() {
+  uname | tr '[:upper:]' '[:lower:]' | sed 's/darwin/osx/'
+}
+
+arch() {
+  if [ "$(platform)" = "osx" ]; then
+    echo -n ""
+  elif [ "x86_64" = "$(uname -m)" ]; then
+    echo -n "64"
+  else
+    echo -n "32"
+  fi
+}
+
+get_download_url() {
+  local version
+  version=$1
+  curl -s https://plugins.cloud.ibm.com/plugins | \
+    jq -r \
+      --arg plugin "$toolname" \
+      --arg version "$version" \
+      --arg platform "$(platform)$(arch)" \
+      '.plugins[] |
+      select(.name == $plugin) |
+      .versions[] |
+      select(.version == $version) |
+      .binaries[] |
+      select(.platform == $platform) |
+      .url'
+}
+
+install "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
