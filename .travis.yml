@@ -2,6 +2,7 @@ language: shell
 before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
+  - export PATH=$(pwd)/.asdf/shims:$PATH
 script:
   - asdf plugin-add ibmcloud https://github.com/teejaded/asdf-ibmcloud.git
   - ic_ver=$(asdf list-all ibmcloud | tail -n1)
