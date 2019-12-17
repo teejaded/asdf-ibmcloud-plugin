@@ -6,5 +6,5 @@ readonly toolname="$(basename "$(dirname "${__dirname}")" | sed "s/^ic\\-//")"
 printenv >&2
 which jq >&2
 
-cmd="curl -s https://plugins.cloud.ibm.com/plugins | jq -r '.plugins[] | select(.name == \"$toolname\") | .versions[] | .version' | tr '\\n' ' '"
+cmd="curl -s https://plugins.cloud.ibm.com/plugins | $(which jq) -r '.plugins[] | select(.name == \"$toolname\") | .versions[] | .version' | tr '\\n' ' '"
 eval "$cmd"
