@@ -2,15 +2,13 @@ language: shell
 before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
-  - export PATH=$(pwd)/.asdf/shims:$PATH
+  - echo "ibmcloud $(asdf latest ibmcloud)" >> .tool-versions
+  - asdf install
+  - export PATH="$HOME/.asdf/shims:$PATH"
 script:
-  - asdf plugin-add ibmcloud https://github.com/teejaded/asdf-ibmcloud.git
-  - ic_ver=$(asdf list-all ibmcloud | tail -n1)
-  - asdf install ibmcloud "$ic_ver"
-  - asdf global ibmcloud "$ic_ver"
   - asdf plugin-add ic-container-service ./
   - asdf list-all ic-container-service
-  - asdf plugin-test ic-container-service ./ 'ibmcloud plugin list'
+  - asdf plugin-test ic-container-service ./ "ibmcloud plugin list"
 os:
   - osx
   - linux
