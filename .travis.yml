@@ -2,13 +2,16 @@ language: shell
 before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
+  - asdf plugin-add ibmcloud https://github.com/teejaded/asdf-ibmcloud.git
+  - asdf plugin-add jq https://github.com/ryodocx/asdf-jq.git
   - echo "ibmcloud $(asdf latest ibmcloud)" >> .tool-versions
   - asdf install
-  - export PATH="$HOME/.asdf/shims:$PATH"
+  - ln -s $(asdf which ibmcloud) /usr/local/bin/ibmcloud
+  - ln -s $(asdf which jq) /usr/local/bin/jq
 script:
   - asdf plugin-add ic-container-service ./
   - asdf list-all ic-container-service
-  - asdf plugin-test ic-container-service ./ "ibmcloud plugin list"
+  - asdf plugin-test ic-container-service ./ "ibmcloud plugin show container-service"
 os:
   - osx
   - linux

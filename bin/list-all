@@ -4,8 +4,5 @@
 readonly __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly toolname="$(basename "$(dirname "${__dirname}")" | sed "s/^ic\\-//")"
 
-asdf install > /dev/null
-jq="$(asdf where jq)/bin/jq"
-
-cmd="curl -s https://plugins.cloud.ibm.com/plugins | $jq -r '.plugins[] | select(.name == \"$toolname\") | .versions[] | .version' | tr '\\n' ' '"
+cmd="curl -s https://plugins.cloud.ibm.com/plugins | jq -r '.plugins[] | select(.name == \"$toolname\") | .versions[] | .version' | tr '\\n' ' '"
 eval "$cmd"
