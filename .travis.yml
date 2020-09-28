@@ -6,8 +6,8 @@ before_script:
   - asdf plugin-add jq https://github.com/ryodocx/asdf-jq.git
   - echo "ibmcloud $(asdf latest ibmcloud)" >> .tool-versions
   - asdf install
-  - ln -s $(asdf which ibmcloud) /usr/local/bin/ibmcloud
-  - ln -s $(asdf which jq) /usr/local/bin/jq
+  - ln -s $(asdf which ibmcloud) /bin/ibmcloud
+  - ln -s $(asdf which jq) /bin/jq
 script:
   - asdf plugin-add ic-container-service ./
   - asdf list-all ic-container-service

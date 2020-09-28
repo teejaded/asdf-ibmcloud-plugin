@@ -4,5 +4,5 @@
 readonly __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly toolname="$(basename "$(dirname "${__dirname}")" | sed "s/^ic\\-//")"
 
-cmd="curl -s https://plugins.cloud.ibm.com/plugins | jq -r '.plugins[] | select(.name == \"$toolname\") | .versions[] | .version' | tr '\\n' ' '"
-eval "$cmd"
+curl -s https://download.clis.cloud.ibm.com/ibm-cloud-cli-plugin-metadata/bluemix-repo-index.yml | \
+  grep container-service-linux-amd64 | sed 's/.*-//' | xargs echo

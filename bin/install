@@ -31,34 +31,22 @@ install() {
 }
 
 platform() {
-  uname | tr '[:upper:]' '[:lower:]' | sed 's/darwin/osx/'
+  uname | tr '[:upper:]' '[:lower:]'
 }
 
 arch() {
-  if [ "$(platform)" = "osx" ]; then
-    echo -n ""
-  elif [ "x86_64" = "$(uname -m)" ]; then
-    echo -n "64"
+  if [ "x86_64" = "$(uname -m)" ]; then
+    echo -n "amd64"
   else
-    echo -n "32"
+    echo -n "386"
   fi
 }
 
 get_download_url() {
   local version
   version=$1
-  curl -s https://plugins.cloud.ibm.com/plugins | \
-    jq -r \
-      --arg plugin "$toolname" \
-      --arg version "$version" \
-      --arg platform "$(platform)$(arch)" \
-      '.plugins[] |
-      select(.name == $plugin) |
-      .versions[] |
-      select(.version == $version) |
-      .binaries[] |
-      select(.platform == $platform) |
-      .url'
+  curl -s https://download.clis.cloud.ibm.com/ibm-cloud-cli-plugin-metadata/bluemix-repo-index.yml | \
+    grep "${toolname}-$(platform)-$(arch)-${version}" | sed 's/.*url: //'
 }
 
 install "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
